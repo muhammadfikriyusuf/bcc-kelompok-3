@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tiket Kereta Online</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    /* Tab Style */
+    .tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+
+    .tab button {
+      background-color: inherit;
+      float: left;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      transition: 0.3s;
+      font-size: 16px;
+      width: 50%;
+      text-align: center;
+    }
+
+    .tab button:hover {
+      background-color: #ddd;
+    }
+
+    .tab button.active {
+      background-color: #3498db;
+      color: white;
+    }
+
+    .tabcontent {
+      display: none;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      background-color: white;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Tiket Kereta Online</h1>
+
+  <!-- Tab Links -->
+  <div class="tab">
+    <button class="tablinks active" onclick="openTab(event, 'Pesan')">Pesan Tiket</button>
+    <button class="tablinks" onclick="openTab(event, 'Riwayat')">Riwayat Tiket</button>
+  </div>
+
+  <!-- Tab Content Pesan Tiket -->
+  <div id="Pesan" class="tabcontent" style="display:block;">
+    <form id="formTiket">
+      <label for="nama">Nama Penumpang:</label>
+      <input type="text" id="nama" required />
+
+      <label for="stasiunAsal">Stasiun Asal:</label>
+      <select id="stasiunAsal" required>
+        <option value="">-- Pilih Stasiun Asal --</option>
+        <option>Jakarta Kota</option>
+        <option>Bandung</option>
+        <option>Surabaya</option>
+        <option>Yogyakarta</option>
+      </select>
+
+      <label for="stasiunTujuan">Stasiun Tujuan:</label>
+      <select id="stasiunTujuan" required>
+        <option value="">-- Pilih Stasiun Tujuan --</option>
+        <option>Jakarta Kota</option>
+        <option>Bandung</option>
+        <option>Surabaya</option>
+        <option>Yogyakarta</option>
+      </select>
+
+      <label for="jamBerangkat">Jam Keberangkatan:</label>
+      <select id="jamBerangkat" required>
+        <option value="">-- Pilih Jam Berangkat --</option>
+        <option>07:00</option>
+        <option>09:00</option>
+        <option>12:00</option>
+        <option>15:00</option>
+        <option>18:00</option>
+      </select>
+
+      <button type="submit">Pesan Tiket</button>
+    </form>
+  </div>
+
+  <!-- Tab Content Riwayat Tiket -->
+  <div id="Riwayat" class="tabcontent">
+    <h2>Riwayat Pembelian Tiket</h2>
+    <table id="tabelTiket">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Asal</th>
+          <th>Tujuan</th>
+          <th>Jam Berangkat</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data akan muncul di sini -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Fungsi untuk tab
+    function openTab(evt, tabName) {
+      const tabs = document.getElementsByClassName("tabcontent");
+      const tabLinks = document.getElementsByClassName("tablinks");
+
+      for (let i = 0; i < tabs.length; i++) {
+        tabs[i].style.display = "none";
+      }
+
+      for (let i = 0; i < tabLinks.length; i++) {
+        tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+      }
+
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+
+    // Submit form
+    document.getElementById('formTiket').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const nama = document.getElementById('nama').value;
+      const asal = document.getElementById('stasiunAsal').value;
+      const tujuan = document.getElementById('stasiunTujuan').value;
+      const jam = document.getElementById('jamBerangkat').value;
+
+      if (!nama || !asal || !tujuan || !jam) {
+        alert("Harap lengkapi semua data!");
+        return;
+      }
+
+      const tbody = document.querySelector('#tabelTiket tbody');
+      const row = document.createElement('tr');
+
+      row.innerHTML = `
+        <td>${nama}</td>
+        <td>${asal}</td>
+        <td>${tujuan}</td>
+        <td>${jam}</td>
+      `;
+
+      tbody.appendChild(row);
+
+      // Reset form
+      document.getElementById('formTiket').reset();
+    });
+  </script>
+
+  <!-- Firebase SDK v9.24.1 -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.24.1/firebase-app.js'; 
+  import { getDatabase, ref, push, set, onValue } from 'https://www.gstatic.com/firebasejs/9.24.1/firebase-database.js'; 
+
+  // Konfigurasi Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyBugERxMZ0woVPlSznlR32P4p8WjPLpCkQ",
+    authDomain: "bcc-kelompok-3.firebaseapp.com",
+    projectId: "bcc-kelompok-3",
+    storageBucket: "bcc-kelompok-3.firebasestorage.app",
+    messagingSenderId: "94571069478",
+    appId: "1:94571069478:web:4a0f5f75c5408af08426e7",
+    measurementId: "G-QVPYSG8F84"
+  };
+
+  // Inisialisasi Firebase
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+
+  // Fungsi simpan ke Firebase
+  document.getElementById('formTiket').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const nama = document.getElementById('nama').value;
+    const asal = document.getElementById('stasiunAsal').value;
+    const tujuan = document.getElementById('stasiunTujuan').value;
+    const jam = document.getElementById('jamBerangkat').value;
+
+    if (!nama || !asal || !tujuan || !jam) {
+      alert("Harap lengkapi semua data!");
+      return;
+    }
+
+    // Simpan ke Firebase
+    const tiketRef = ref(database, 'pemesanan/');
+    const newTiketRef = push(tiketRef);
+    set(newTiketRef, {
+      nama: nama,
+      asal: asal,
+      tujuan: tujuan,
+      jam: jam
+    });
+
+    // Reset form
+    document.getElementById('formTiket').reset();
+  });
+
+  // Tampilkan data dari Firebase
+  window.onload = function () {
+    const tbody = document.querySelector('#tabelTiket tbody');
+    const tiketRef = ref(database, 'pemesanan');
+
+    onValue(tiketRef, (snapshot) => {
+      tbody.innerHTML = "";
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${data.nama}</td>
+          <td>${data.asal}</td>
+          <td>${data.tujuan}</td>
+          <td>${data.jam}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    });
+  };
+</script>
+
+</body>
+</html>
